@@ -1,0 +1,68 @@
+esphome:
+  name: nodemcu_pm
+
+esp8266:
+  board: nodemcuv2
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+  password: !secret ota_password
+  id: my_ota
+  
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  fast_connect: true
+  manual_ip:
+    static_ip: 192.168.1.109
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Nmcu Fallback Hotspot"
+    password: !secret fallbackappassword
+web_server:
+  port: 80
+  auth:
+    username: admin
+    password: !secret webservpass
+captive_portal:
+sensor:
+  - platform: wifi_signal
+    name: "nodemcu_pm ssi"
+    update_interval: 600s
+    
+  - platform: pulse_meter
+    pin: D1
+    unit_of_measurement: 'kW'
+    name: 'Electricity Usage'
+    internal_filter: 100ms
+    accuracy_decimals: 3
+    filters:
+      - multiply: 0.06
+    total:
+      name: "Electricity Total"
+      unit_of_measurement: "kWh"
+      accuracy_decimals: 3
+      filters:
+        - multiply: 0.001
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: nodemcu_pm IP Address
+    ssid:
+      name: nodemcu_pm Connected SSID
+    bssid:
+      name: nodemcu_pm Connected BSSID
+    mac_address:
+      name: nodemcu_pm Mac Wifi Address
+    scan_results:
+      name: nodemcu_pm Latest Scan Results
+
